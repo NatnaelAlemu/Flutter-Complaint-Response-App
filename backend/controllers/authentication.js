@@ -1,16 +1,19 @@
 
-import UserModel from '../models/user.js'
+import {BaseUserModel} from '../models/baseUser.js'
+import ComplainantModel from '../models/complainant.js'
+import AdminModel from '../models/admin.js'
 import bcryptjs from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken' 
+import ComplaintModel from '../models/complaint.js'
 export const getAllUsers = async (req, res) => {
     console.log('Request is comming');
     try {
-        const subscribers = await UserModel.find()
-        res.status(200).json({subscribers,message:"this is message from api"})
+        const allusers = await BaseUserModel.find()
+        res.status(200).json({allusers})
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
-}
+} 
 
 export const getSingleUser = (req, res) => {
     if (res.user) {
@@ -21,27 +24,37 @@ export const signUp = async (req, res) => {
     try {
         console.log(req.body)
         const { email, confirmPassword, password,username,fullName,role } = req.body
-        console.log(`email ${email}`)
-        console.log(`password ${password}`)
-        console.log(`confirmPassword ${confirmPassword}`)
-        console.log(`username ${username}`)
-        console.log(`fullName ${fullName}`)
         if(!(email && password && confirmPassword && username && fullName && role)){
             console.log("All fields are required")
             return res.status(403).send("All fields are required")
         }
-    const ifExists = await UserModel.findOne({ email })
+    const ifExists = await BaseUserModel.findOne({email})
     if (ifExists) { 
-        console("Account already exists.")
+        console.log("Account already exists.")
         return res.status(409).send("User allready exists") }
     if (password !== confirmPassword) { 
         console.log("Password doesn't match")
         return res.status(409).send("Password doesn't match") }
-    const hashedPassword = await bcryptjs.hash(password, 12)
-    req.body.password = hashedPassword
+        const hashedPassword = await bcryptjs.hash(password, 12)
+        const newUser = req.body
+        newUser.password = hashedPassword
     try {
-        const newUser = await UserModel.create(req.body)
-        res.status(201).send(newUser)
+        console.log(`role ${newUser.role}`)
+        if(newUser.role !== 'admin' && newUser.role !== 'complainant'){
+            console.log("role invalid")
+            return res.status(403).json({message:"role invalid"})
+        }
+        if(newUser.role === 'admin'){
+           const createdUser = await AdminModel.create(newUser)
+           console.log("Register success")
+            res.status(201).json({createdUser})
+        }
+        if(newUser.role === 'complainant'){
+           console.log("Register success")
+           const createdUser = await ComplainantModel.create(newUser)
+            res.status(201).json({createdUser})
+        }
+
     } catch (err) {
         console.log(err.message)
         res.send(err.message)
@@ -57,7 +70,7 @@ export const login = async (req, res) => {
         const { email, password } = req.body
         if (!(email && password)) { return res.status(400).send("All fields are required") }
 
-        const currentUser = await UserModel.findOne({ email })
+        const currentUser = await BaseUserModel.findOne({ email })
         const comparePassword = await bcryptjs.compare(password, currentUser.password)
         console.log(`Compare password is ${comparePassword}`)
         if (currentUser && comparePassword) {
@@ -85,7 +98,7 @@ export const updateProfile = async (req, res) => {
         const currentInfo = res.user
         console.log(currentInfo)
         if (currentInfo) {
-            await UserModel.findOneAndUpdate(currentInfo, { $set: updateInfo })
+            await BaseUserModel.findOneAndUpdate(currentInfo, { $set: updateInfo })
             res.status(201).send("Account Updated!")
 
         }
@@ -98,7 +111,7 @@ export const deleteProfile = async (req, res) => {
     try {
         const checkUser = res.user
         if (checkUser) {
-            await UserModel.findOneAndDelete(checkUser);
+            await BaseUserModel.findOneAndDelete(checkUser);
             res.status(200).send("user successfully deleted")
         }
     } catch (err) {

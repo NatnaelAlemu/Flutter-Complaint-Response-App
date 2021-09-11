@@ -1,4 +1,4 @@
-GET http://localhost:4000/api/getall
+GET http://localhost:4000/api/getallusers
 
 ###
 post http://localhost:4000/api/signup
@@ -42,3 +42,5 @@ Content-Type: application/json
 ###
 delete http://localhost:4000/api/deleteprofile/61311133e9b83a45912b842f
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXJyZW50VXNlciI6eyJfaWQiOiI2MTMxMTEzM2U5YjgzYTQ1OTEyYjg0MmYiLCJmdWxsTmFtZSI6ImZ1bGxOYW1lIiwiZW1haWwiOiJlIiwidXNlcm5hbWUiOiJ1c2VybmFtZSIsInBhc3N3b3JkIjoiJDJhJDEyJE1ySFd2OFJMakR0U3FUczguRWp0V2V3VkVTS0JtakhUSVAzaXFPUjhzTWNiQVh1NXU5Z2ZhIiwicm9sZSI6InVzZXIiLCJfX3YiOjB9LCJpYXQiOjE2MzA2MDU2NzEsImV4cCI6MTYzMDYwNzQ3MX0.U4JLOP2t-jjHh6vwguMwbjKfTV54Hg-LBypt02Zm4fo
+###
+get http://localhost:4000/api/getallcomplaints

@@ -1,26 +1,26 @@
 import mongoose from 'mongoose'
+import Base  from './responseComplaintBase.js'
+const Schema = mongoose.Schema
 
-const UserSchema = new mongoose.Schema({
-    fullName:{
-        type: String,
-        required: true
-    },
-    email: {
-        type:String,
-        required:true
-    },
-    username:{
-        type:String, 
-        required:true
-    },
-    password: {
-        type:String,
-        required:true
-    },
-    role:{
-        type:String,
-        required:true
+
+const ComplaintModel = Base.discriminator(
+    "Complaint",
+    new Schema({
+     
+        fixed:{
+            type:Boolean,
+            default:false,
+        },
+        madeby:{
+            type:Schema.Types.ObjectId,
+            required:true,
+            ref:'Complainant'
+        }, 
+        response:{  
+            type:Schema.Types.ObjectId,
+            ref:"Response"
+        }
     }
-})
-
-export default mongoose.model('User',UserSchema)
+    )
+)
+export default ComplaintModel

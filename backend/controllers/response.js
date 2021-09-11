@@ -3,13 +3,13 @@ import AdminModel from '../models/admin.js'
 import ComplaintModel from '../models/complaint.js'
 
 export const createResponse = async(req,res)=>{
+    console.log("request creat is commig")
     console.log(req.body)
     try {
         const responseInfo = req.body
         const response = await ResponseModel.create(responseInfo)
        if(response){
             const forComplaint = await ComplaintModel.findById(response.forcomplaint)
-            console.log(forComplaint)
             if(forComplaint == null){
                 return res.status(403).json({messgae:"complaint not found"})
             }
@@ -20,6 +20,7 @@ export const createResponse = async(req,res)=>{
             if(issuedby){
                 issuedby.myresponses.push(response)
                 await issuedby.save()
+            
             return res.status(201).json({response})
             }else{
                 return res.status(403).json({message:"admin doesn't exist"})

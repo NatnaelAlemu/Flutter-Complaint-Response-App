@@ -1,6 +1,6 @@
 import express from 'express'
 import {getUser} from '../middlewares/getuser.js'
-import { createComplaint,getmyFixedComplaints,getAllmyComplaints,getComplaint,getAllComplaints,updateComplaint,deleteComplaint } from '../controllers/complaint.js'
+import { createComplaint,getFixedComplaints,getmyFixedComplaints,getAllmyComplaints,getComplaint,getAllComplaints,updateComplaint,deleteComplaint } from '../controllers/complaint.js'
 import { getAllUsers,getSingleUser,signUp,login,updateProfile,deleteProfile } from '../controllers/authentication.js'
 import{createResponse,getAllResponses,updateResponse,getResponse,deleteResponse} from '../controllers/response.js'
 
@@ -23,6 +23,7 @@ router.put('/updatecomplaint/:id',updateComplaint)
 router.delete('/deletecomplaint/:id',deleteComplaint)
 router.get('/getallmycomplaints/:id',getAllmyComplaints)
 router.get('/getmyfixedComplaints/:id',getmyFixedComplaints)
+router.get('/getfixedComplaints/',getFixedComplaints)
 
 
 /////////////////////
@@ -31,5 +32,4 @@ router.get('/getallresponses',getAllResponses)
 router.get('/getresponse/:id',getResponse)
 router.put('/updateresponse/:id',updateResponse)
 router.delete('/deleteresponse/:id',deleteResponse)
-createResponse
 export default router

@@ -4,7 +4,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:frontend/Blocs/login/login_bloc.dart';
 import 'package:frontend/customWidgets/widgets.dart';
 import 'package:frontend/models/loginInModel.dart';
-import 'package:frontend/screens/signup_screen.dart';
 
 import 'screens.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';

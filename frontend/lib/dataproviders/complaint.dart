@@ -85,7 +85,7 @@ class ComplaintDataProvider {
       Future<dynamic> deleteComplaint(Complaint complaint,String id) async {
     dynamic result;
     try {
-      final response = await http.put(
+      final response = await http.delete(
         Uri.parse('$API_URL/deletecomplaint/$id'),
         headers: {
           "accept": "application/json",

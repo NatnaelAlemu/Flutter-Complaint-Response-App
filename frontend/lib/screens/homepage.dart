@@ -4,7 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:frontend/Blocs/login/login_bloc.dart';
 import 'package:frontend/customWidgets/widgets.dart';
 import 'package:frontend/models/loginInModel.dart';
-import 'package:frontend/screens/signup_screen.dart';
+import 'package:frontend/screens/signup_and_update_screen.dart';
 
 import 'screens.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -65,7 +65,7 @@ class Homepage extends StatelessWidget {
                       hintText: "Email",
                     ),
                     FormTextField(
-                      obscureText: false,
+                      obscureText: true,
                       prefix: Icon(Icons.password),
                       controller: passwordController,
                       whenEmpty: "this field is required",
@@ -73,7 +73,7 @@ class Homepage extends StatelessWidget {
                     ),
                     BlocConsumer<LoginBloc, LoginState>(
                       listener: (context, state) {
-                        if (state is LoginFailed) {
+                        if (state is AuthLoginFailed) {
                           showAlert(context, AlertType.error, "Failed");
                         }
                         if (state is LoggedIn) {
@@ -115,7 +115,7 @@ class Homepage extends StatelessWidget {
                               InkWell(
                                 onTap: () {
                                   Navigator.pushNamed(
-                                      context, SignupScreen.routeName);
+                                      context, SignUpAndUpdateScreen.routeName);
                                 },
                                 child: Text(
                                   "Signup Here",
@@ -128,7 +128,7 @@ class Homepage extends StatelessWidget {
                             ],
                           );
                         }
-                        if (state is LoggingIn) {
+                        if (state is LoginCrudInProgress) {
                           return SpinKitSpinningLines(
                             color: Colors.deepPurple,
                             size: 60,

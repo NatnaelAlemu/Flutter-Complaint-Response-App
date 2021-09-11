@@ -43,12 +43,20 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
           ),
           BlocConsumer<ComplaintBloc, ComplaintState>(
             listener: (context, state) {
-              if (state is CrudOperationsSuccess) {
-                print("update success ${state.message}");
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(state.message),
-                  duration: Duration(seconds: 2),
-                ));
+              if (state is ComplaintCrudOperationsSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      state.message,
+                      style: TextStyle(
+                          fontFamily: 'PatrickHand',
+                          fontSize: 20,
+                          backgroundColor: Colors.greenAccent,
+                          color: Colors.white),
+                    ),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
                 BlocProvider.of<ComplaintBloc>(context)
                     .add(LoadAllMyComplaints(_id));
               }
@@ -71,7 +79,17 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
                 );
               }
               if (state is AllMyFixedComplaintsLoaded) {
-                return Container(
+                return 
+                 state.allmyfixedcomplaints.length ==0?
+                 Center(child: Text("You have no Fixed Complaints",
+                 style: TextStyle(
+                          fontFamily: 'PatrickHand',
+                          fontSize: 20,
+                          color: Colors.deepOrange),
+                    ),
+
+                 )  :
+                Container(
                   margin: EdgeInsets.symmetric(horizontal: 15),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -182,7 +200,16 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
                 );
               }
               if (state is AllMyComplaintsLoaded) {
-                return Container(
+                return state.allmycomplaints.length ==0?
+                 Center(child: Text("You have no Complaints",
+                 style: TextStyle(
+                          fontFamily: 'PatrickHand',
+                          fontSize: 20,
+                          color: Colors.deepOrange),
+                    ),
+
+                 )  :
+                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -240,15 +267,15 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
                                   Expanded(
                                       child: FormButton(
                                           color: Colors.redAccent,
-                                          buttonLabel: "one",
+                                          buttonLabel: "delete",
                                           onpressed: () {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(
                                                   content:
-                                                      Text('Delete Complaint?'),
+                                                      Text('Are you shure?'),
                                                   action: SnackBarAction(
-                                                    label: "Are you shure",
+                                                    label: "yes",
                                                     onPressed: () {
                                                       var complaint = Complaint(
                                                           state.allmycomplaints[

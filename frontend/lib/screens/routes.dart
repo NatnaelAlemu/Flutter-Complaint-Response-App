@@ -9,8 +9,8 @@ class AppRoute {
     switch (route) {
       case ('/'):
         return MaterialPageRoute(builder: (context) => Homepage());
-      case (SignupScreen.routeName):
-        return MaterialPageRoute(builder: (context) => SignupScreen());
+      case (SignUpAndUpdateScreen.routeName):
+        return MaterialPageRoute(builder: (context) => SignUpAndUpdateScreen());
       case (ComplaintScreen.routeName):
         return MaterialPageRoute(builder: (context) => ComplaintScreen());
       case AdminScreen.routeName:

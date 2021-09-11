@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/Blocs/complaint/complaint_bloc.dart';
 import 'package:frontend/Blocs/login/login_bloc.dart';
+import 'package:frontend/models/user.dart';
 import 'package:frontend/screens/screens.dart';
 
 class ComplaintScreen extends StatefulWidget {
@@ -20,10 +21,12 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
-    String _id = "";
+    var user = User('email', 'password');
+    String token = "";
     var state = BlocProvider.of<LoginBloc>(context).state;
     if (state is LoggedIn) {
-      _id = state.user.id!;
+      user = state.user;
+      token = state.token;
     }
     return Scaffold(
       appBar: AppBar(
@@ -40,13 +43,13 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                 size: 30,
               ),
             ),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.notifications,
-                size: 30,
-              ),
-            ),
+            // IconButton(
+            //   onPressed: () {},
+            //   icon: Icon(
+            //     Icons.notifications,
+            //     size: 30,
+            //   ),
+            // ),
             PopupMenuButton(
                 onSelected: (value) {
                   switch (value) {
@@ -57,7 +60,28 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                       Navigator.pushNamed(context, '/');
                       break;
                     case 2:
-                      Navigator.pushNamed(context, "/accountsettings");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignUpAndUpdateScreen(
+                              user: user, isUpdate: true, token: token),
+                        ),
+                      );
+                      break;
+                    case 3:
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Are you shure?'),
+                            action: SnackBarAction(
+                              label: "yes",
+                              onPressed: () {
+                                BlocProvider.of<LoginBloc>(context).add(
+                                  DeleteAccount(user, token),
+                                );
+                              },
+                            )),
+                      );
+
                       break;
                   }
                 },
@@ -196,11 +220,11 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
             Navigator.pushNamed(context, AddComplaint.routeName);
           } else if (index == 1) {
             BlocProvider.of<ComplaintBloc>(context)
-                .add(LoadAllMyComplaints(_id));
+                .add(LoadAllMyComplaints(user.id!));
             Navigator.pushNamed(context, AllAndFixedComplaintScreen.routeName);
           } else {
             BlocProvider.of<ComplaintBloc>(context)
-                .add(LoadFixedComplaints(_id));
+                .add(LoadFixedComplaints(user.id!));
             Navigator.pushNamed(context, AllAndFixedComplaintScreen.routeName);
           }
         },

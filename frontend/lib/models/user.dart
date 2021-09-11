@@ -14,7 +14,8 @@ class User {
         fullName: json['fullName'],
         userName: json['username'],
         confirmPassword: json['confirmPassword'],
-        role: json['role'],id: json['_id']);
+        role: json['role'],
+        id: json['_id']);
   }
   Map<String,dynamic> toJson(){
     return {
@@ -23,7 +24,8 @@ class User {
       "email":email,
       "password":password,
       "confirmPassword":confirmPassword,
-      "role":role 
+      "role":role,
+      "id":id 
     };
   }
 }

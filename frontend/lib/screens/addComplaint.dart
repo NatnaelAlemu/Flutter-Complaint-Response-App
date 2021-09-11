@@ -7,7 +7,12 @@ import 'package:frontend/customWidgets/widgets.dart';
 import 'package:frontend/models/models.dart';
 
 class AddComplaint extends StatelessWidget {
-  AddComplaint({Key? key,this.complaintId, this.title, this.description, this.isUpdate = false})
+  AddComplaint(
+      {Key? key,
+      this.complaintId,
+      this.title,
+      this.description,
+      this.isUpdate = false})
       : super(key: key);
   static const String routeName = "/addcomplaint";
   final _formKey = GlobalKey<FormState>();
@@ -26,7 +31,10 @@ class AddComplaint extends StatelessWidget {
     String _id = "";
     var loggedinState = BlocProvider.of<LoginBloc>(context).state;
     if (loggedinState is LoggedIn) {
+      print("it is loggedin state");
       _id = loggedinState.user.id!;
+    } else {
+      print("it is not logged in state");
     }
     return Scaffold(
       appBar: AppBar(
@@ -77,30 +85,31 @@ class AddComplaint extends StatelessWidget {
                 ),
                 FormButton(
                   color: Colors.deepPurple,
-                  buttonLabel: isUpdate?"update":"Submit",
+                  buttonLabel: isUpdate ? "update" : "Submit",
                   onpressed: () {
                     var form = _formKey.currentState;
                     if (form!.validate()) {
-                      var complaint =isUpdate?
-                      Complaint(
-                        titleController.text,
-                        descriptionController.text,
-                        madeby: _id,
-                        id:complaintId,
-                        seen: false,
-                        fixed: false,
-                      ):
-                       Complaint(
-                        titleController.text,
-                        descriptionController.text,
-                        madeby: _id,
-                        seen: false,
-                        fixed: false,
-                      );
-                      isUpdate?
-                      BlocProvider.of<ComplaintBloc>(context).add(UpdateComplaint(complaint))
-                      :BlocProvider.of<ComplaintBloc>(context)
-                          .add(CreateComplaint(complaint));
+                      isUpdate
+                          ? BlocProvider.of<ComplaintBloc>(context)
+                              .add(UpdateComplaint(Complaint(
+                              titleController.text,
+                              descriptionController.text,
+                              madeby: _id,
+                              id: complaintId,
+                              seen: false,
+                              fixed: false,
+                            )))
+                          : BlocProvider.of<ComplaintBloc>(context).add(
+                              CreateComplaint(
+                                Complaint(
+                                  titleController.text,
+                                  descriptionController.text,
+                                  madeby: _id,
+                                  seen: false,
+                                  fixed: false,
+                                ),
+                              ),
+                            );
                     }
                   },
                 ),
@@ -111,7 +120,7 @@ class AddComplaint extends StatelessWidget {
             ),
             BlocConsumer<ComplaintBloc, ComplaintState>(
                 listener: (contex, state) {
-              if (state is CrudOperationsSuccess) {
+              if (state is ComplaintCrudOperationsSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     duration: Duration(seconds: 2),

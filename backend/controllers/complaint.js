@@ -6,6 +6,8 @@ export const createComplaint = async(req,res)=>{
 
     try {
         const complaintInfo = req.body
+        console.log("complaint info")
+        console.log(complaintInfo)
         const complaint = await ComplaintModel.create(complaintInfo)
        if(complaint){
             const madeby = await ComplainantModel.findOne({_id:complaintInfo.madeby})
@@ -183,9 +185,11 @@ export const updateComplaint = async(req,res)=>{
     try {
         const updateInfo = req.body 
         const id = req.params.id
+        console.log("update request is commig")
         const complaint = await ComplaintModel.findById(id)
         if(complaint){
-            const updatedComplaint = await ComplaintModel.findOneAndUpdate(complaint, {$set: updateInfo})
+            const updatedComplaint = await ComplaintModel.findByIdAndUpdate(complaint.id, {$set: updateInfo})
+            console.log(`Complaint updated",${updatedComplaint}`)
             res.status(201).json({message:"Complaint updated",updatedComplaint})
         }else{
             return res.status(404).json({message:"Complaint not found"})
@@ -197,6 +201,7 @@ export const updateComplaint = async(req,res)=>{
 }
 export const deleteComplaint = async(req,res)=>{
     try {
+        console.log("delete request is commig")
         const id = req.params.id
         const complaint = await ComplaintModel.findById(id)
         if(complaint){

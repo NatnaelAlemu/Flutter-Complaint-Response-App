@@ -78,8 +78,8 @@ export const login = async (req, res) => {
                 { currentUser },
                 process.env.ACCESS_TOKEN_SECRET,
                 {
-                    expiresIn: '30m'
-                }
+                    expiresIn: '2h'
+                } 
             )
             console.log('Login success')
             res.status(200).json({ accessToken: Generate_Token, user: currentUser })
@@ -92,6 +92,7 @@ export const login = async (req, res) => {
     }
 }
 export const updateProfile = async (req, res) => {
+    console.log("Update reqeust is commig")
     console.log(`res user ${res.user}`)
     try {
         const updateInfo = req.body
@@ -103,18 +104,24 @@ export const updateProfile = async (req, res) => {
 
         }
     } catch (error) {
-        res.status(500).send(error.message)
+        res.status(500).json({message:error.message})
     }
 }
 export const deleteProfile = async (req, res) => {
-    console.log(res.user)
+    // console.log(res.user)
     try {
         const checkUser = res.user
+
         if (checkUser) {
-            await BaseUserModel.findOneAndDelete(checkUser);
-            res.status(200).send("user successfully deleted")
+            console.log("check user found")
+            const allComplaints = await ComplaintModel.find({madeby:checkUser._id})
+            allComplaints.map(async(complaint,index)=>{
+                await ComplaintModel.deleteOne(complaint)
+            })
+            await ComplainantModel.deleteOne(checkUser)
+            return res.status(200).send("user successfully deleted")
         }
-    } catch (err) {
-        res.status(500).send(err.message)
+    } catch (err) { 
+        res.status(500).json({message:err.message})
     }
 }

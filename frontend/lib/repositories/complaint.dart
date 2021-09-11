@@ -15,4 +15,10 @@ class ComplaintRepository {
     Future<dynamic> loadMyFixedComplaints(String id)async{
     return await complaintDataProvider.loadMyFixedComplaints(id);
   }
+  Future<dynamic> updateComplaint(Complaint complaint, String id)async{
+    return await complaintDataProvider.updateComplaint(complaint, id);
+  }
+    Future<dynamic> deleteComplaint(Complaint complaint, String id)async{
+    return await complaintDataProvider.deleteComplaint(complaint, id);
+  }
 }

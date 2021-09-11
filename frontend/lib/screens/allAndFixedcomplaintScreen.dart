@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:frontend/Blocs/complaint/complaint_bloc.dart';
+import 'package:frontend/Blocs/login/login_bloc.dart';
 import 'package:frontend/customWidgets/formButton.dart';
+import 'package:frontend/models/complaint.dart';
+import 'package:frontend/screens/addComplaint.dart';
 
 class AllAndFixedComplaintScreen extends StatefulWidget {
   static const String routeName = '/allAndFixedComplaint';
@@ -16,6 +19,11 @@ class AllAndFixedComplaintScreen extends StatefulWidget {
 class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
   @override
   Widget build(BuildContext context) {
+    String _id = "";
+    var state = BlocProvider.of<LoginBloc>(context).state;
+    if (state is LoggedIn) {
+      _id = state.user.id!;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -33,7 +41,18 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          BlocBuilder<ComplaintBloc, ComplaintState>(
+          BlocConsumer<ComplaintBloc, ComplaintState>(
+            listener: (context, state) {
+              if (state is CrudOperationsSuccess) {
+                print("update success ${state.message}");
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(state.message),
+                  duration: Duration(seconds: 2),
+                ));
+                BlocProvider.of<ComplaintBloc>(context)
+                    .add(LoadAllMyComplaints(_id));
+              }
+            },
             builder: (context, state) {
               if (state is ComplaintsLoading) {
                 return Center(
@@ -60,7 +79,7 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
                       itemCount: state.allmyfixedcomplaints.length,
                       itemBuilder: (context, index) {
                         return Container(
-                          height: MediaQuery.of(context).size.height/1.8,
+                          height: MediaQuery.of(context).size.height / 1.8,
                           child: Card(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -68,7 +87,6 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
                               children: [
                                 Container(
                                   margin: EdgeInsets.symmetric(horizontal: 10),
-
                                   decoration: BoxDecoration(
                                     color: Colors.greenAccent,
                                     borderRadius: BorderRadius.only(
@@ -85,7 +103,7 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
                                         "Response",
                                         style: TextStyle(
                                             decoration:
-                                              TextDecoration.underline,
+                                                TextDecoration.underline,
                                             fontFamily: 'PatrickHand',
                                             fontSize: 30,
                                             color: Colors.deepPurple),
@@ -107,23 +125,27 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 10,),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 Container(
                                   margin: EdgeInsets.symmetric(horizontal: 10),
-                                    decoration: BoxDecoration(
+                                  decoration: BoxDecoration(
                                     color: Colors.greenAccent,
                                     borderRadius: BorderRadius.only(
                                       bottomLeft: Radius.circular(20),
                                       topLeft: Radius.circular(20),
                                       topRight: Radius.circular(20),
-                                    ),),
+                                    ),
+                                  ),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
                                         "Complaint",
                                         style: TextStyle(
-                                            decoration: TextDecoration.underline,
+                                            decoration:
+                                                TextDecoration.underline,
                                             fontFamily: 'PatrickHand',
                                             fontSize: 30,
                                             color: Colors.deepPurple),
@@ -194,21 +216,66 @@ class _ComplaintScreenState extends State<AllAndFixedComplaintScreen> {
                                 children: [
                                   Expanded(
                                       child: FormButton(
-                                          color: Colors.greenAccent,
-                                          buttonLabel: "Back",
-                                          onpressed: () {
-                                            Navigator.pop(context);
-                                          })),
-                                  Expanded(
-                                      child: FormButton(
                                           color: Colors.yellowAccent,
                                           buttonLabel: "update",
-                                          onpressed: () {})),
+                                          onpressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AddComplaint(
+                                                  title: state.allmycomplaints[
+                                                      index]['title'],
+                                                  description:
+                                                      state.allmycomplaints[
+                                                          index]['description'],
+                                                  complaintId:
+                                                      state.allmycomplaints[
+                                                          index]['_id'],
+                                                  isUpdate: true,
+                                                ),
+                                              ),
+                                            );
+                                          })),
                                   Expanded(
                                       child: FormButton(
                                           color: Colors.redAccent,
                                           buttonLabel: "one",
-                                          onpressed: () {})),
+                                          onpressed: () {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                  content:
+                                                      Text('Delete Complaint?'),
+                                                  action: SnackBarAction(
+                                                    label: "Are you shure",
+                                                    onPressed: () {
+                                                      var complaint = Complaint(
+                                                          state.allmycomplaints[
+                                                              index]['title'],
+                                                          state.allmycomplaints[
+                                                                  index]
+                                                              ['description'],
+                                                          id: state
+                                                                  .allmycomplaints[
+                                                              index]['_id']);
+                                                      BlocProvider.of<
+                                                                  ComplaintBloc>(
+                                                              context)
+                                                          .add(
+                                                        DeleteComplaint(
+                                                            complaint),
+                                                      );
+                                                      BlocProvider.of<
+                                                                  ComplaintBloc>(
+                                                              context)
+                                                          .add(
+                                                              LoadAllMyComplaints(
+                                                                  _id));
+                                                    },
+                                                  )),
+                                            );
+                                          })),
                                 ],
                               )
                             ],

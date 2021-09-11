@@ -6,15 +6,23 @@ import 'package:frontend/Blocs/login/login_bloc.dart';
 import 'package:frontend/customWidgets/widgets.dart';
 import 'package:frontend/models/models.dart';
 
-
 class AddComplaint extends StatelessWidget {
-  AddComplaint({Key? key}) : super(key: key);
+  AddComplaint({Key? key,this.complaintId, this.title, this.description, this.isUpdate = false})
+      : super(key: key);
   static const String routeName = "/addcomplaint";
   final _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
+  final String? title;
+  final String? description;
+  final bool isUpdate;
+  final String? complaintId;
   @override
   Widget build(BuildContext context) {
+    if (isUpdate) {
+      titleController.text = title!;
+      descriptionController.text = description!;
+    }
     String _id = "";
     var loggedinState = BlocProvider.of<LoginBloc>(context).state;
     if (loggedinState is LoggedIn) {
@@ -23,7 +31,7 @@ class AddComplaint extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Add your Complaint",
+          isUpdate ? "Update Complaint" : "Add your Complaint",
           style: TextStyle(
               fontSize: 25, fontFamily: 'Merienda', color: Colors.deepPurple),
         ),
@@ -43,7 +51,7 @@ class AddComplaint extends StatelessWidget {
             Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                "Submit Your Complaint",
+                isUpdate ? "Update Your Complaint" : "Submit Your Complaint",
                 style: TextStyle(
                   fontSize: 25,
                   fontFamily: 'Merienda',
@@ -69,17 +77,29 @@ class AddComplaint extends StatelessWidget {
                 ),
                 FormButton(
                   color: Colors.deepPurple,
-                  buttonLabel: "Submit",
+                  buttonLabel: isUpdate?"update":"Submit",
                   onpressed: () {
                     var form = _formKey.currentState;
                     if (form!.validate()) {
-                      var complaint = Complaint(
-                          titleController.text, descriptionController.text,
-                          madeby: _id,
-                          seen: false,
-                          fixed: false,
-                          );
-                      BlocProvider.of<ComplaintBloc>(context)
+                      var complaint =isUpdate?
+                      Complaint(
+                        titleController.text,
+                        descriptionController.text,
+                        madeby: _id,
+                        id:complaintId,
+                        seen: false,
+                        fixed: false,
+                      ):
+                       Complaint(
+                        titleController.text,
+                        descriptionController.text,
+                        madeby: _id,
+                        seen: false,
+                        fixed: false,
+                      );
+                      isUpdate?
+                      BlocProvider.of<ComplaintBloc>(context).add(UpdateComplaint(complaint))
+                      :BlocProvider.of<ComplaintBloc>(context)
                           .add(CreateComplaint(complaint));
                     }
                   },

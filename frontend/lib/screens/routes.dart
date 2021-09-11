@@ -19,6 +19,8 @@ class AppRoute {
         return MaterialPageRoute(builder: (_) => AddComplaint());
       case AllAndFixedComplaintScreen.routeName:
         return MaterialPageRoute(builder: (_) => AllAndFixedComplaintScreen());
+      case AllCommplaints.routeName:
+        return MaterialPageRoute(builder: (_) => AllCommplaints());
       default:
         return MaterialPageRoute(builder: (context) => ErrorScreen());
     }

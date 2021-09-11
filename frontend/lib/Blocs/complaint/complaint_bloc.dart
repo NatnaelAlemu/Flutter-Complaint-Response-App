@@ -61,5 +61,37 @@ class ComplaintBloc extends Bloc<ComplaintEvent, ComplaintState> {
         print(e.toString());
       }
     }
+    else if (event is UpdateComplaint) {
+      yield ComplaintsLoading();
+      await Future.delayed(
+        Duration(seconds: 3),
+      );
+      try {
+        var message = await repository.updateComplaint(event.complaint,event.complaint.id!);
+        if (message.containsKey("update")) {
+          yield CrudOperationsSuccess("Complaint Upadated successfully");
+        } else
+          yield FailedComplaintsCrud(message['message']);
+        
+      } catch (e) {
+          yield FailedComplaintsCrud(e.toString());
+      }
+    }
+        else if (event is DeleteComplaint) {
+      yield ComplaintsLoading();
+      await Future.delayed(
+        Duration(seconds: 3),
+      );
+      try {
+        var message = await repository.deleteComplaint(event.complaint,event.complaint.id!);
+        if (message.containsKey("delete")) {
+          yield CrudOperationsSuccess("Complaint Deleted successfully");
+        } else
+          yield FailedComplaintsCrud(message['message']);
+        
+      } catch (e) {
+          yield FailedComplaintsCrud(e.toString());
+      }
+    }
   }
 }

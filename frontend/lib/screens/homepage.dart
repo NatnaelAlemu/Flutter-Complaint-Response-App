@@ -20,7 +20,7 @@ class Homepage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Complaint App'),
+        title: Text('Complaint-Response App'),
       ),
       body: Stack(
         children: [
@@ -79,9 +79,10 @@ class Homepage extends StatelessWidget {
                         if (state is LoggedIn) {
                           if (state.user.role == "admin") {
                             Navigator.pushNamed(context, AdminScreen.routeName);
+                          } else {
+                            Navigator.pushNamed(
+                                context, ComplaintScreen.routeName);
                           }
-                          Navigator.pushNamed(
-                              context, ComplaintScreen.routeName);
                         }
                       },
                       builder: (context, state) {

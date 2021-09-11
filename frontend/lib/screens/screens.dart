@@ -4,4 +4,4 @@ export 'complainanttScreen.dart';
 export 'adminScreen.dart';
 export 'addComplaint.dart';
 export 'allAndFixedcomplaintScreen.dart';
-
+export 'allcomplaints.dart';

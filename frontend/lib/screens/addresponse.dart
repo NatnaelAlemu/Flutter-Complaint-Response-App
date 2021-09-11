@@ -1,19 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:frontend/Blocs/complaint/complaint_bloc.dart';
 import 'package:frontend/Blocs/login/login_bloc.dart';
+import 'package:frontend/Blocs/response/response_bloc.dart';
 import 'package:frontend/customWidgets/widgets.dart';
-import 'package:frontend/models/models.dart';
+import 'package:frontend/models/response.dart';
+import 'package:frontend/screens/screens.dart';
 
-class AddComplaint extends StatelessWidget {
-  AddComplaint({Key? key}) : super(key: key);
-  static const String routeName = "/addcomplaint";
+class AddResponse extends StatelessWidget {
+  AddResponse(
+      {Key? key,
+      required this.title,
+      required this.description,
+      required this.complaintId,
+      this.responseId,
+      this.responseTitle = "",
+      this.responseDescription = "",
+      this.isUpdate = false})
+      : super(key: key);
+  static const String routeName = "/AddResponse";
   final _formKey = GlobalKey<FormState>();
+  final String title;
+  final String description;
+  final String complaintId;
+  final String? responseTitle;
+  final String? responseDescription;
+  final bool isUpdate;
+  final String? responseId;
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    if (isUpdate) {
+      titleController.text = responseTitle!;
+      descriptionController.text = responseDescription!;
+    }
     String _id = "";
     var loggedinState = BlocProvider.of<LoginBloc>(context).state;
     if (loggedinState is LoggedIn) {
@@ -22,7 +43,7 @@ class AddComplaint extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Add your Complaint",
+          isUpdate ? "Response Update" : "Response submission",
           style: TextStyle(
               fontSize: 25, fontFamily: 'Merienda', color: Colors.deepPurple),
         ),
@@ -39,10 +60,40 @@ class AddComplaint extends StatelessWidget {
           ),
           ListView(children: [
             SizedBox(height: MediaQuery.of(context).size.height / 3),
+            Text(
+              "Complaint was",
+              style: TextStyle(
+                fontSize: 25,
+                fontFamily: 'Merienda',
+                color: Colors.lightGreen,
+              ),
+            ),
+            Column(children: [
+              Text(
+                "Title",
+                style: TextStyle(
+                    fontFamily: 'Merienda',
+                    decoration: TextDecoration.underline),
+              ),
+              Text(
+                "$title",
+                style: TextStyle(fontFamily: 'PatrickHand'),
+              ),
+              Text(
+                "Description",
+                style: TextStyle(
+                    fontFamily: 'Merienda',
+                    decoration: TextDecoration.underline),
+              ),
+              Text(
+                "${description}",
+                style: TextStyle(fontFamily: 'PatrickHand'),
+              )
+            ]),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                "Submit Your Complaint",
+                isUpdate ? "Update Response" : "Submit Your Response",
                 style: TextStyle(
                   fontSize: 25,
                   fontFamily: 'Merienda',
@@ -72,14 +123,24 @@ class AddComplaint extends StatelessWidget {
                   onpressed: () {
                     var form = _formKey.currentState;
                     if (form!.validate()) {
-                      var complaint = Complaint(
-                          titleController.text, descriptionController.text,
-                          madeby: _id,
-                          seen: false,
-                          fixed: false,
-                          );
-                      BlocProvider.of<ComplaintBloc>(context)
-                          .add(CreateComplaint(complaint));
+                      var response = isUpdate
+                          ? Response(
+                              titleController.text,
+                              descriptionController.text,
+                              _id,
+                              complaintId,
+                              id: responseId!,
+                            )
+                          : Response(
+                              titleController.text,
+                              descriptionController.text,
+                              _id,
+                              complaintId,
+                            );
+                      isUpdate
+                          ? BlocProvider.of<ResponseBloc>(context).add(UpdateResponse(response))
+                          : BlocProvider.of<ResponseBloc>(context)
+                              .add(CreateResponse(response));
                     }
                   },
                 ),
@@ -88,9 +149,9 @@ class AddComplaint extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            BlocConsumer<ComplaintBloc, ComplaintState>(
+            BlocConsumer<ResponseBloc, ResponseState>(
                 listener: (contex, state) {
-              if (state is CrudOperationsSuccess) {
+              if (state is ResponseCrudSucess) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     duration: Duration(seconds: 2),
@@ -104,16 +165,16 @@ class AddComplaint extends StatelessWidget {
                 );
                 titleController.text = "";
                 descriptionController.text = "";
-                Navigator.pop(context);
+                Navigator.pushNamed(context, AdminScreen.routeName);
               }
             }, builder: (_, state) {
-              if (state is ComplaintsLoading) {
+              if (state is ResponseCrudInProgress) {
                 return SpinKitSpinningLines(
                   color: Colors.deepPurple,
                   size: 60,
                 );
               }
-              if (state is FailedComplaintsCrud) {
+              if (state is ResponseCrudFailed) {
                 return Text(
                   state.message,
                   style: TextStyle(

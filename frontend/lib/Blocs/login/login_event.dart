@@ -10,3 +10,4 @@ class Login extends LoginEvent {
 
 
 }
+class TrigerInitial extends LoginEvent{}

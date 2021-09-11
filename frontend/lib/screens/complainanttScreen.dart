@@ -51,6 +51,9 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                 onSelected: (value) {
                   switch (value) {
                     case 1:
+                      BlocProvider.of<LoginBloc>(context).add(
+                        TrigerInitial(),
+                      );
                       Navigator.pushNamed(context, '/');
                       break;
                     case 2:

@@ -16,6 +16,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> mapEventToState(
     LoginEvent event,
   ) async* {
+    if (event is TrigerInitial) {
+      yield LoginInitial();
+    }
     if (event is Login) {
       yield LoggingIn();
       await Future.delayed(Duration(seconds: 1));

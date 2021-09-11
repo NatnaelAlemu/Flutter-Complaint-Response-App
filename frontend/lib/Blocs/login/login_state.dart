@@ -5,9 +5,8 @@ abstract class LoginState {}
 
 class LoginInitial extends LoginState {}
 
-class LoggingIn extends LoginState{
+class LoginCrudInProgress extends LoginState {}
 
-}
 class LoggedIn extends LoginState {
   final User user;
   final String token;
@@ -16,6 +15,15 @@ class LoggedIn extends LoginState {
     required this.token,
   });
 }
-class LoginFailed extends LoginState{
+class AuthLoginFailed extends LoginState{}
 
+class LoginCrudFailed extends LoginState {
+  final String message;
+
+  LoginCrudFailed(this.message);
+}
+
+class UpdateAccountSuccess extends LoginState {
+}
+class DeleteAccountSuccess extends LoginState {
 }

@@ -53,7 +53,7 @@ class ComplaintBloc extends Bloc<ComplaintEvent, ComplaintState> {
       try {
         var message = await repository.createCompliant(event.complaint);
         if (message.containsKey("complaint")) {
-          yield CrudOperationsSuccess("Complaint created successfully");
+          yield ComplaintCrudOperationsSuccess("Complaint created successfully");
         } else if (message.containsKey("message")) {
           yield FailedComplaintsCrud(message['message']);
         }
@@ -69,7 +69,7 @@ class ComplaintBloc extends Bloc<ComplaintEvent, ComplaintState> {
       try {
         var message = await repository.updateComplaint(event.complaint,event.complaint.id!);
         if (message.containsKey("update")) {
-          yield CrudOperationsSuccess("Complaint Upadated successfully");
+          yield ComplaintCrudOperationsSuccess("Complaint Upadated successfully");
         } else
           yield FailedComplaintsCrud(message['message']);
         
@@ -77,7 +77,7 @@ class ComplaintBloc extends Bloc<ComplaintEvent, ComplaintState> {
           yield FailedComplaintsCrud(e.toString());
       }
     }
-        else if (event is DeleteComplaint) {
+    else if (event is DeleteComplaint) {
       yield ComplaintsLoading();
       await Future.delayed(
         Duration(seconds: 3),
@@ -85,7 +85,7 @@ class ComplaintBloc extends Bloc<ComplaintEvent, ComplaintState> {
       try {
         var message = await repository.deleteComplaint(event.complaint,event.complaint.id!);
         if (message.containsKey("delete")) {
-          yield CrudOperationsSuccess("Complaint Deleted successfully");
+          yield ComplaintCrudOperationsSuccess("Complaint Deleted successfully");
         } else
           yield FailedComplaintsCrud(message['message']);
         

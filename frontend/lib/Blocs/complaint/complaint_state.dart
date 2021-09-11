@@ -31,9 +31,9 @@ class FailedComplaintsCrud extends ComplaintState {
 
 class ComplaintsLoading extends ComplaintState {}
 
-class CrudOperationsSuccess extends ComplaintState {
+class ComplaintCrudOperationsSuccess extends ComplaintState {
   final String message;
 
-  CrudOperationsSuccess(this.message);
+  ComplaintCrudOperationsSuccess(this.message);
 
 }
